@@ -4,86 +4,24 @@
 <head>
   <meta charset="utf-8">
   <title>Dynamic Table</title>
-  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="styles.css" rel="stylesheet" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" charset="utf-8"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js" charset="utf-8"></script>
   <script src="res.js"></script>
   <meta charset="utf-8">
-<style>
-body {
-  background-color: #d1e5f0;
-  font: 14px sans-serif;
-}
-
-#container {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-#title {
-  font: 26px sans-serif;
-  position: absolute;
-  top: -40px;
-  left: 450px;
-}
-
-#FilterableTable {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 40px;
-  left: 20px;
-}
-
-.SearchBar { 
-  display: inline; 
-  position: relative;
-  left: 1%;
-}
-
-.SearchBar input {
-  position: relative;
-  left: 2%;
-}
-
-table { 
-  position: absolute;
-  top: 40px;
-  left: 20px;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-}
-
-table a:link, a:visited { text-decoration: none; }
-
-table a:hover, a:active { text-decoration: underline; }
-
-table, th, td { border: 1px solid black; }
-
-td, th {
-  padding: 5px;
-  text-align: center;
-  height: 20px;
-}
-
-th {
-  background-color: #4393c3;
-  color: #d9f0a3;
-}
-
-td { background-color: #92c5de; }
-
-tr:hover td { background-color: #edf8b1; }
-
-</style>
 </head>
 
 <body>
- <button id="first">first</button>
- <button id="previous"><</button>
- <input type ="text" id="pageNO">
- <button id="next">></button>
- <button id = "last">last</button>
+       <div>
+        <button id="first">first</button>
+         <button id="previous"><</button>
+         <input type ="text" id="pageNO">
+         <button id="next">></button>
+         <button id = "last">last</button>
+    </div>
+ 
   <script>
 var data = [
                     { "packagetype" : "e", "None" : 45,"Others" : 4 ,"id":"1"},
@@ -105,7 +43,7 @@ d3.select("body").append("div")
 d3.select("#container").append("div")
   .attr("id", "FilterableTable");
 
-d3.select("#FilterableTable").append("h1")
+/*d3.select("#FilterableTable").append("h1")
   .attr("id", "title")
   .text("My D3 Table")
 
@@ -120,7 +58,7 @@ d3.select(".SearchBar")
     .attr("class", "SearchBar")
     .attr("id", "search")
     .attr("type", "text")
-    .attr("placeholder", "Search...");
+    .attr("placeholder", "Search...");*/
   
 var table = d3.select("#FilterableTable").append("table");
 table.append("thead").append("tr"); 
@@ -397,7 +335,61 @@ d3.select("#pageNO").attr("value",page);
 //});
 d3.select(self.frameElement).style("height", "780px").style("width", "1150px"); 
 </script>
-
+           
+           
+           
+<div class="container">
+    <div class="table-responsive"> 
+        <table class="table table-bordered"> 
+            <thead> 
+                <tr> 
+                    <th>#</th> 
+                    <th>Table heading</th> 
+                    <th>Table heading</th>
+                </tr> 
+            </thead> 
+            <tbody> 
+                <tr> 
+                    <td>1</td> 
+                    <td>Table cell</td> 
+                    <td>Table cell</td> 
+                </tr> 
+                <tr> 
+                    <td>2</td> 
+                    <td>Table cell</td> 
+                    <td>Table cell</td> 
+                </tr> 
+            </tbody> 
+        </table> 
+    </div>
+    <div>
+        <nav aria-label="Page navigation">
+          <ul class="pagination custom-pegination">
+            <li>
+              <a href="#" aria-label="Previous">
+                <span aria-hidden="true">First</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            <li><input type="text" class="form-control pagination-input"></li>
+            <li>
+              <a href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" aria-label="Previous">
+                <span aria-hidden="true">Last</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+    </div>
+</div>
 </body>
 
 
