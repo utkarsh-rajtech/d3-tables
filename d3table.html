@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 
 <head>
@@ -9,20 +9,46 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" charset="utf-8"></script>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js" charset="utf-8"></script>
-  <script src="res.js"></script>
+  
+  <script src="d3table.js"></script>
   <meta charset="utf-8">
 </head>
 
 <body>
-       <div>
-        <button id="first">first</button>
-         <button id="previous"><</button>
-         <input type ="text" id="pageNO">
-         <button id="next">></button>
-         <button id = "last">last</button>
+     
+<div class="container" id= "container">
+    <div class="table-responsive" id ="FilterableTable"> 
+       
     </div>
- 
-  <script>
+    <div>
+        <nav aria-label="Page navigation">
+          <ul class="pagination custom-pegination">
+            <li>
+              <a href="#" aria-label="Previous" id="first">
+                <span aria-hidden="true">First</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" aria-label="Previous" id="previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            <li><input type="text" class="form-control pagination-input" id="pageNO"></li>
+            <li>
+              <a href="#" aria-label="Next" id="next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" aria-label="Previous" id = "last">
+                <span aria-hidden="true">Last</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+    </div>
+</div>
+<script>
 var data = [
                     { "packagetype" : "e", "None" : 45,"Others" : 4 ,"id":"1"},
                     { "packagetype" : "a", "None" : 55,"Others" : 7 ,"id":"2"},
@@ -39,9 +65,11 @@ var clicks = {packagetype: 0, none: 0, others: 0};
 // draw the table
 d3.select("body").append("div")
   .attr("id", "container")
+  .attr("class","container")
 
 d3.select("#container").append("div")
-  .attr("id", "FilterableTable");
+  .attr("id", "FilterableTable")
+  .attr("class" ,"table-responsive");
 
 /*d3.select("#FilterableTable").append("h1")
   .attr("id", "title")
@@ -60,7 +88,7 @@ d3.select(".SearchBar")
     .attr("type", "text")
     .attr("placeholder", "Search...");*/
   
-var table = d3.select("#FilterableTable").append("table");
+var table = d3.select("#FilterableTable").append("table").attr("class","table table-bordered");
 table.append("thead").append("tr"); 
 
 var headers = table.select("tr").selectAll("th")
@@ -72,6 +100,7 @@ var headers = table.select("tr").selectAll("th")
 var rows, row_entries, row_entries_no_anchor, row_entries_with_anchor;
 var pageSize = 2;
 var page = 1;  
+var pageLimit = Math.ceil(data.length/pageSize);
 var viewdata = data.slice((page-1)*pageSize,page*pageSize);
 d3.select("#pageNO").attr("value",page);
   table.append("tbody")
@@ -108,17 +137,21 @@ d3.select("#pageNO").attr("value",page);
 
  
   d3.select('#next').on("click" ,function() {
+  if(page < pageLimit){
     page++;
     d3.select("#pageNO").attr("value",page);
     viewdata = data.slice((page-1)*pageSize,page*pageSize);
     redraw();
+  }
   });
 
   d3.select('#previous').on("click" ,function() {
+    if(page > 1){
     page--;
     d3.select("#pageNO").attr("value",page);
     viewdata = data.slice((page-1)*pageSize,page*pageSize);
     redraw();
+  }
   });
 
   d3.select('#first').on("click" ,function() {
@@ -335,61 +368,7 @@ d3.select("#pageNO").attr("value",page);
 //});
 d3.select(self.frameElement).style("height", "780px").style("width", "1150px"); 
 </script>
-           
-           
-           
-<div class="container">
-    <div class="table-responsive"> 
-        <table class="table table-bordered"> 
-            <thead> 
-                <tr> 
-                    <th>#</th> 
-                    <th>Table heading</th> 
-                    <th>Table heading</th>
-                </tr> 
-            </thead> 
-            <tbody> 
-                <tr> 
-                    <td>1</td> 
-                    <td>Table cell</td> 
-                    <td>Table cell</td> 
-                </tr> 
-                <tr> 
-                    <td>2</td> 
-                    <td>Table cell</td> 
-                    <td>Table cell</td> 
-                </tr> 
-            </tbody> 
-        </table> 
-    </div>
-    <div>
-        <nav aria-label="Page navigation">
-          <ul class="pagination custom-pegination">
-            <li>
-              <a href="#" aria-label="Previous">
-                <span aria-hidden="true">First</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
-            <li><input type="text" class="form-control pagination-input"></li>
-            <li>
-              <a href="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" aria-label="Previous">
-                <span aria-hidden="true">Last</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-    </div>
-</div>
+
 </body>
 
 
