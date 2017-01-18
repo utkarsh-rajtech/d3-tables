@@ -34,6 +34,7 @@
               </a>
             </li>
             <li><input type="text" class="form-control pagination-input" id="pageNO"></li>
+            <li><label class="form-control pagination-input">of</label><input type="text" class="form-control pagination-input" id = "totalPages" readonly></li>
             <li>
               <a href="#" aria-label="Next" id="next">
                 <span aria-hidden="true">&raquo;</span>
@@ -103,6 +104,7 @@ var page = 1;
 var pageLimit = Math.ceil(data.length/pageSize);
 var viewdata = data.slice((page-1)*pageSize,page*pageSize);
 d3.select("#pageNO").attr("value",page);
+d3.select("#totalPages").attr("value",pageLimit);
   table.append("tbody")
 
   // data bind
