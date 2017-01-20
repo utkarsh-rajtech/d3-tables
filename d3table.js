@@ -1,24 +1,24 @@
 var data = [
-                    { "packagetype" : "e", "None" : 45,"Others" : 4 ,"id":"1"},
-                    { "packagetype" : "a", "None" : 55,"Others" : 7 ,"id":"2"},
-                    { "packagetype" : "d", "None" : 40,"Others" : 3 ,"id" :"3"},
-                    { "packagetype" : "c", "None" : 32,"Others" : 8,"id" :"4" },
-                    { "packagetype" : "f", "None" : 47,"Others" : 6,"id" :"5" },
-                    { "packagetype" : "g", "None" : 56,"Others" : 10,"id" :"6" },
-                    { "packagetype" : "q", "None" : 73,"Others" : 5,"id" :"7"},
-                    { "packagetype" : "p", "None" : 90,"Others" : 2,"id" :"8" },
+                    { "packagetype" : "Internal R...", "None" : 45,"Others" : 4 ,"id":"1"},
+                    { "packagetype" : "Internal T...", "None" : 55,"Others" : 7 ,"id":"2"},
+                    { "packagetype" : "Customer R...", "None" : 40,"Others" : 3 ,"id" :"3"},
+                    { "packagetype" : "Legacy Def...", "None" : 32,"Others" : 8,"id" :"4" },
+                    { "packagetype" : "New Request...", "None" : 47,"Others" : 6,"id" :"5" },
+                    { "packagetype" : "POC...", "None" : 56,"Others" : 10,"id" :"6" },
+                    { "packagetype" : "Defect Count..", "None" : 73,"Others" : 5,"id" :"7"},
+                    { "packagetype" : "Acceptance Rate", "None" : 90,"Others" : 2,"id" :"8" },
                 ];
 var column_names = ["Package Type","None","Others"];
 var clicks = {packagetype: 0, none: 0, others: 0};
 
-// draw the table
-d3.select("body").append("div")
-  .attr("id", "container")
-  .attr("class","container")
+// draw the tableD
+// d3.select("body").append("div")
+//   .attr("id", "container")
+//   .attr("class","container")
 
-d3.select("#container").append("div")
-  .attr("id", "FilterableTable")
-  .attr("class" ,"table-responsive");
+// d3.select("#container").append("div")
+//   .attr("id", "FilterableTable")
+//   .attr("class" ,"table-responsive");
 
 /*d3.select("#FilterableTable").append("h1")
   .attr("id", "title")
@@ -47,7 +47,7 @@ var headers = table.select("tr").selectAll("th")
     .text(function(d) { return d; });
 
 var rows, row_entries, row_entries_no_anchor, row_entries_with_anchor;
-var pageSize = 2;
+var pageSize = 12;
 var page = 1;  
 var pageLimit = Math.ceil(data.length/pageSize);
 var viewdata = data.slice((page-1)*pageSize,page*pageSize);
