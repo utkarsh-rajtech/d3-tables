@@ -47,11 +47,12 @@ var headers = table.select("tr").selectAll("th")
     .text(function(d) { return d; });
 
 var rows, row_entries, row_entries_no_anchor, row_entries_with_anchor;
-var pageSize = 12;
+var pageSize = 5;
 var page = 1;  
 var pageLimit = Math.ceil(data.length/pageSize);
 var viewdata = data.slice((page-1)*pageSize,page*pageSize);
 d3.select("#pageNO").attr("value",page);
+d3.select("#totalPages").attr("value",pageLimit);
   table.append("tbody")
 
   // data bind
