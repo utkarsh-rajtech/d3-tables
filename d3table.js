@@ -75,11 +75,18 @@ data.forEach(function (d) {
 data.push(totals);
  
 var rows, row_entries, row_entries_no_anchor, row_entries_with_anchor;
-var pageSize = 5;
-
-var page = 1;  
+var paginationoff= true,pageSize;
+var page = 1;
+if(paginationoff === true){
+   pageSize = data.length;
+   d3.select("#paginationBar").style("display","none");
+} else{
+   pageSize = 5;
+} 
 var pageLimit = Math.ceil(data.length/pageSize);
 var viewdata = data.slice((page-1)*pageSize,page*pageSize);
+  
+
 d3.select("#pageNO").attr("value",page);
 d3.select("#totalPages").attr("value",pageLimit);
   table.append("tbody")

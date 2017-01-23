@@ -21,6 +21,57 @@ body {
   margin-top:30px;
 }
 
+#FilterableTable thead {
+  position: fixed;
+}
+
+#FilterableTable th {
+    /*width: 219px;
+     border: none; 
+    border-left: none;*/
+}
+
+
+/*#FilterableTable .table {
+  width: 97.7%;
+}*/
+
+.table>caption+thead>tr:first-child>td, .table>caption+thead>tr:first-child>th, .table>colgroup+thead>tr:first-child>td, .table>colgroup+thead>tr:first-child>th, .table>thead:first-child>tr:first-child>td, .table>thead:first-child>tr:first-child>th {
+  border-top: 1px solid #ddd;
+}
+
+#FilterableTable .table {
+  border: none;
+}
+
+#FilterableTable .table thead {
+  width: 100%;
+}
+#FilterableTable .table tbody {
+  max-height: 245px;
+  overflow-y: auto;
+  width: 100%;
+  padding-top: 35px;
+}
+#FilterableTable .table thead, #FilterableTable .table tbody, #FilterableTable .table tr, #FilterableTable .table td, .table-fixed th {
+  display: block;
+  width: 100%;
+}
+#FilterableTable .table tbody td, #FilterableTable .table thead > tr> th {
+  float: left;
+  border-bottom: 1px solid #ddd;
+      width: 216px;
+    height: 35px;
+}
+
+#FilterableTable .table tbody td {
+  border-top: none;
+}
+
+#FilterableTable td {
+  width: 220px;
+}
+
 .SearchBar { 
   display: inline; 
   position: relative;
