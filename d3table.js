@@ -7,9 +7,22 @@ var data = [
                     { "packagetype" : "POC...", "None" : 56,"Others" : 10,"id" :"6" },
                     { "packagetype" : "Defect Count..", "None" : 73,"Others" : 5,"id" :"7"},
                     { "packagetype" : "Acceptance Rate", "None" : 90,"Others" : 2,"id" :"8" },
+                    { "packagetype" : "Defect Analysis...", "None" : 45,"Others" : 4 ,"id":"9"},
+                    { "packagetype" : "Quality...", "None" : 55,"Others" : 7 ,"id":"10"},
+                    { "packagetype" : "Customer R...", "None" : 40,"Others" : 3 ,"id" :"11"},
+                    { "packagetype" : "Pull Requests...", "None" : 32,"Others" : 8,"id" :"12" },
+                    { "packagetype" : "Defect Removal Efficiency", "None" : 47,"Others" : 6,"id" :"13" },
+                    { "packagetype" : "Failure Cost...", "None" : 56,"Others" : 10,"id" :"14" },
+                    { "packagetype" : "Prevention Cost", "None" : 73,"Others" : 5,"id" :"15"},
+                    { "packagetype" : "Open Issues", "None" : 90,"Others" : 2,"id" :"16" },
+                    { "packagetype" : "Resource Allocation", "None" : 47,"Others" : 6,"id" :"17" },
+                    { "packagetype" : "Cost of Quality...", "None" : 56,"Others" : 10,"id" :"18" },
+                    { "packagetype" : "Design Defects", "None" : 73,"Others" : 5,"id" :"19"},
+                    { "packagetype" : "Closed Issues", "None" : 90,"Others" : 2,"id" :"20" }
                 ];
 var column_names = ["Package Type","None","Others"];
 var clicks = {packagetype: 0, none: 0, others: 0};
+var totals = {};
 
 // draw the tableD
 // d3.select("body").append("div")
@@ -46,8 +59,24 @@ var headers = table.select("tr").selectAll("th")
     .append("th")
     .text(function(d) { return d; });
 
+totals['packagetype'] = 'Total';
+data.forEach(function (d) {
+  column_names.forEach(function (k) {
+    if (k !== "Package Type") {
+      if (k in totals) {
+        totals[k] += d[k];
+      } else {
+        totals[k] = d[k];
+      }
+    }
+  });
+});
+
+data.push(totals);
+ 
 var rows, row_entries, row_entries_no_anchor, row_entries_with_anchor;
 var pageSize = 5;
+
 var page = 1;  
 var pageLimit = Math.ceil(data.length/pageSize);
 var viewdata = data.slice((page-1)*pageSize,page*pageSize);
@@ -59,7 +88,6 @@ d3.select("#totalPages").attr("value",pageLimit);
   rows = table.select("tbody").selectAll("tr")
     .data(viewdata, function(d){ return d.id; });
 
-  console.log(rows);  
   
   // enter the rows
   rows.enter()
@@ -85,7 +113,7 @@ d3.select("#totalPages").attr("value",pageLimit);
   })
   row_entries_no_anchor.text(function(d) { return d; })
 
- 
+  
   d3.select('#next').on("click" ,function() {
   if(page < pageLimit){
     page++;
@@ -226,8 +254,7 @@ d3.select("#totalPages").attr("value",pageLimit);
   /**  sort functionality **/
   headers
     .on("click", function(d) {
-      console.log(d);
-      if (d == "Package Type") {
+           if (d == "Package Type") {
         clicks.packagetype++;
         // even number of clicks
         if (clicks.packagetype % 2 == 0) {
