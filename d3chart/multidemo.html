@@ -146,7 +146,7 @@ var chartConfig = {
           null
         ],
         "data": [
-          687.42,
+          487.42,
           24,
           33,
           44,
@@ -202,7 +202,7 @@ var chartConfig = {
         "data": [
           101.45,
           234,
-          555,
+          455,
           52,
           322,
           292,
@@ -273,8 +273,7 @@ var line1 = d3.svg.line()
               return x(d.name); 
             })
             .y(function(d,i) { 
-              console.log(d);
-                return y1(d.value); 
+             return y1(d.value); 
             })
 var line2 = d3.svg.line()
             .x(function(d,i) { 
@@ -481,6 +480,7 @@ function drawChart(numOfAxes){
                   .attr("class", "x axis")
                   .attr("transform", "translate(0," + h + ")")
                   .call(xAxis);
+
          graph.selectAll(".x.axis text")  // select all the text elements for the xaxis
           .attr("transform", function(d) {
              return "translate( 0 ," + this.getBBox().height + ")rotate(-90)";
