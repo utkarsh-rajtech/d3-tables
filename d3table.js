@@ -22,7 +22,7 @@ var data = [
                 ];
 var column_names = ["Package Type","None","Others"];
 var clicks = {packagetype: 0, none: 0, others: 0};
-var totals = {};
+var totals = [];
 
 // draw the tableD
 // d3.select("body").append("div")
@@ -49,59 +49,94 @@ d3.select(".SearchBar")
     .attr("id", "search")
     .attr("type", "text")
     .attr("placeholder", "Search...");*/
-  
-var table = d3.select("#FilterableTable").append("table").attr("class","table table-bordered");
-table.append("thead").append("tr"); 
 
-var headers = table.select("tr").selectAll("th")
-    .data(column_names)
-  .enter()
-    .append("th")
-    .text(function(d) { return d; });
-
-totals['packagetype'] = 'Total';
-data.forEach(function (d) {
-  column_names.forEach(function (k) {
-    if (k !== "Package Type") {
-      if (k in totals) {
-        totals[k] += d[k];
-      } else {
-        totals[k] = d[k];
-      }
-    }
-  });
-});
-
-data.push(totals);
- 
-var rows, row_entries, row_entries_no_anchor, row_entries_with_anchor;
-var paginationoff= true,pageSize;
+var table, headers;
+var rows, row_entries, row_entries_no_anchor, row_entries_with_anchor, showInlineFilter;
+var paginationoff, pageSize, pageLimit, viewdata, nxt, prv, first, last;
 var page = 1;
-if(paginationoff === true){
-   pageSize = data.length;
-   d3.select("#paginationBar").style("display","none");
-} else{
-   pageSize = 5;
-} 
-var pageLimit = Math.ceil(data.length/pageSize);
-var viewdata = data.slice((page-1)*pageSize,page*pageSize);
-  
 
-d3.select("#pageNO").attr("value",page);
-d3.select("#totalPages").attr("value",pageLimit);
-  table.append("tbody")
+function drawTable(id, pagination, showInlineFilter){
+    paginationoff = pagination;
+    showInlineFilter = showInlineFilter;
+    d3.select("#"+id).append("div").attr({"class":"filter-icon", "id":"filter-icon"}).append("i").attr({"class":"fa fa-filter", "aria-hidden":"true"});
+    
+    table = d3.select("#"+id).append("table").attr("class","table table-bordered");
+    table.append("thead").append("tr"); 
 
-  // data bind
-  rows = table.select("tbody").selectAll("tr")
-    .data(viewdata, function(d){ return d.id; });
+    headers = table.select("tr").selectAll("th")
+    .data(column_names)
+    .enter()
+    .append("th")
+    .text(function(d, i) {return d;});
+    //.text(function(d) { return d; });
+    
+    
+    //totals['packagetype'] = 'Total';
+    /*data.forEach(function (d) {
+        console.log(d);
+        column_names.forEach(function (k, i) {
+            console.log(k, i);
+            if (k !== column_names[i]) {
+              if (k in totals) {
+                totals[k] += d[k];
+              } else {
+                totals[k] = d[k];
+              }
+            }
+        });
+    });
+    console.log(totals);
+    //data.push(totals);*/
+    
+    if(paginationoff === true){
+        pageSize = data.length;
+        d3.select("#paginationBar").style("display","none");
+    } else{
+        pageSize = 5;
+        drawTablePagination();
+    }
+    
+}
+  
+function drawTablePagination(){ 
+    
+    pageLimit = Math.ceil(data.length/pageSize);
+    viewdata = data.slice((page-1)*pageSize,page*pageSize);
 
-  
-  // enter the rows
-  rows.enter()
-    .append("tr")
-  
-  // enter td's in each row
-  row_entries = rows.selectAll("td")
+
+    d3.select("#pageNO").attr("value",page);
+    d3.select("#totalPages").attr("value",pageLimit);
+    
+    addRowData();
+    
+    nxt = d3.select('#next');
+    prv = d3.select('#previous');
+    first = d3.select('#first');
+    last = d3.select('#last');
+    
+    attachListeners();
+}
+
+function addFilterRow(){
+    var firstRow = table.select("tbody").append("tr").attr({"class":"filter-row","id":"filter-row"}).style("display", "none").classed("open", false);
+    for(var m=0; m<column_names.length; m++){
+        firstRow.append("td").append("input").attr({"type":"text", "id":"input_"+column_names[m].replace(/ /g,'')});
+    }
+}
+
+function addRowData(){
+    table.append("tbody");
+    if(showInlineFilter == true)
+        addFilterRow();
+    
+    // data bind    
+    rows = table.select("tbody").selectAll("tr").data(viewdata, function(d){ if(d!=undefined)return d.id; });
+
+    // enter the rows
+    rows.enter().append("tr")
+
+    // enter td's in each row
+    row_entries = rows.selectAll("td")
       .data(function(d) { 
         var arr = [];
         for (var k in d) {
@@ -114,153 +149,71 @@ d3.select("#totalPages").attr("value",pageLimit);
     .enter()
       .append("td") 
 
-  // draw row entries with no anchor 
-  row_entries_no_anchor = row_entries.filter(function(d) {
-    return (/https?:\/\//.test(d) == false)
-  })
-  row_entries_no_anchor.text(function(d) { return d; })
-
-  
-  d3.select('#next').on("click" ,function() {
-  if(page < pageLimit){
-    page++;
-    d3.select("#pageNO").attr("value",page);
-    viewdata = data.slice((page-1)*pageSize,page*pageSize);
-    redraw();
-  }
-  });
-
-  d3.select('#previous').on("click" ,function() {
-    if(page > 1){
-    page--;
-    d3.select("#pageNO").attr("value",page);
-    viewdata = data.slice((page-1)*pageSize,page*pageSize);
-    redraw();
-  }
-  });
-
-  d3.select('#first').on("click" ,function() {
-    page = 1;
-    d3.select("#pageNO").attr("value",page);
-    viewdata = data.slice((page-1)*pageSize,page*pageSize);
-    redraw();
-  });
-
-  d3.select('#last').on("click" ,function() {
-    page = Math.ceil(data.length/pageSize);
-    d3.select("#pageNO").attr("value",page);
-    viewdata = data.slice((page-1)*pageSize,page*pageSize);
-    redraw();
-  });
-
-  function redraw() {
-    rows = table.select("tbody").selectAll("tr")
-      .data(viewdata, function(d){ return d.id; })
+    // draw row entries with no anchor 
+    row_entries_no_anchor = row_entries.filter(function(d) {
+        return (/https?:\/\//.test(d) == false)
+    });
     
-        // enter the rows
-        rows.enter()
-         .append("tr");
-         
-        // enter td's in each row
-        row_entries = rows.selectAll("td")
-            .data(function(d) { 
-              var arr = [];
-              for (var k in d) {
-                if (d.hasOwnProperty(k)) {
-              arr.push(d[k]);
-                }
-              }
-              return [arr[0],arr[1],arr[2]];
-            })
-          .enter()
-            .append("td") 
-
-        // draw row entries with no anchor 
-        row_entries_no_anchor = row_entries.filter(function(d) {
-          return (/https?:\/\//.test(d) == false)
-        })
-        row_entries_no_anchor.text(function(d) { return d; })
-
-        
-        
-        // exit
-        rows.exit().remove();
-
+    row_entries_no_anchor.text(function(d) { return d; });
 }
+
+function setPage(elm){
+    var pagenum = page;
+    if(elm == "first"){
+        pagenum = 1
+    }else if(elm == "last"){
+        pagenum = Math.ceil(data.length/pageSize);
+    }else if(elm == "next" && page < pageLimit){
+        pagenum++;
+    }else if(elm == "previous" && page > 1){
+        pagenum--;
+    }
     
-   d3.select("#pageNO").on("keyup",function(){
+    page = pagenum;
+}
+
+function attachListeners(){
+    d3.selectAll('.pagination-action').on("click", function(d, i){
+        setPage(this.id);
+        d3.select("#pageNO").attr("value",page);
+        viewdata = data.slice((page-1)*pageSize,page*pageSize);
+        redraw();
+    });
+    
+    
+   /*d3.select("#pageNO").on("keyup",function(){
        page = Number(this.value.trim());
        console.log(page);
        viewdata = data.slice((page-1)*pageSize,page*pageSize);
        redraw();
-   }) 
-  /**  search functionality **/
-    d3.select("#search")
-      .on("keyup", function() { // filter according to key pressed 
-        var searched_data = data,
-            text = this.value.trim();
-        
-        var searchResults = searched_data.map(function(r) {
-          console.log(r);
-          var regex = new RegExp("^" + text + ".*", "i");
-          if (regex.test(r.packagetype)) { // if there are any results
-            return regex.exec(r.packagetype)[0]; // return them to searchResults
-          } 
-        })
-      
-      // filter blank entries from searchResults
-        searchResults = searchResults.filter(function(r){ 
-          return r != undefined;
-        })
-        
-        // filter dataset with searchResults
-        searched_data = searchResults.map(function(r) {
-           return data.filter(function(p) {
-            console.log(p);
-            return p.packagetype.indexOf(r) != -1;
-          })
-        })
-
-        // flatten array 
-    searched_data = [].concat.apply([], searched_data)
-        
-        // data bind with new data
-    rows = table.select("tbody").selectAll("tr")
-      .data(searched_data, function(d){ return d.id; })
+   });*/
     
-        // enter the rows
-        rows.enter()
-         .append("tr");
-         
-        // enter td's in each row
-        row_entries = rows.selectAll("td")
-            .data(function(d) { 
-              var arr = [];
-              for (var k in d) {
-                if (d.hasOwnProperty(k)) {
-              arr.push(d[k]);
-                }
-              }
-              return [arr[0],arr[1],arr[2]];
-            })
-          .enter()
-            .append("td") 
-
-        // draw row entries with no anchor 
-        row_entries_no_anchor = row_entries.filter(function(d) {
-          return (/https?:\/\//.test(d) == false)
-        })
-        row_entries_no_anchor.text(function(d) { return d; })
-
-        
-        
-        // exit
-        rows.exit().remove();
-      })
     
-  /**  sort functionality **/
-  headers
-    .on("click", function(d) {
+    if(showInlineFilter == true){
+        d3.select('#filter-icon').select('i').on("click", function(d, i){
+            if(table.select("tr#filter-row").classed('open')){
+                table.select("tr#filter-row").transition().transition().style("display", "none").each("end", function(){
+                   d3.select(this).classed("open", false);
+                });
+            }else{
+                table.select("tr#filter-row").transition().transition().style("display", "block").each("end", function(){
+                   d3.select(this).classed("open", true);
+                });
+            }
+
+        });
+        
+        d3.select("#filter-row").select("td>input").on("keyup", function(d) {
+            if(d3.event.keyCode == 13){
+                searchTable(this);
+            }
+        });
+    }
+    
+    
+    
+    /**  sort functionality **/
+  headers.on("click", function(d) {
            if (d == "Package Type") {
         clicks.packagetype++;
         // even number of clicks
@@ -349,5 +302,141 @@ d3.select("#totalPages").attr("value",pageLimit);
       
       
     }) // end of click listeners
+    
+    
+}
+
+/*  
+  .on("click" ,function() {
+  if(page < pageLimit){
+    page++;
+    d3.select("#pageNO").attr("value",page);
+    viewdata = data.slice((page-1)*pageSize,page*pageSize);
+    redraw();
+  }
+  });
+
+  .on("click" ,function() {
+    if(page > 1){
+    page--;
+    d3.select("#pageNO").attr("value",page);
+    viewdata = data.slice((page-1)*pageSize,page*pageSize);
+    redraw();
+  }
+  });
+
+  d3.select('#first').on("click" ,function() {
+    page = 1;
+    d3.select("#pageNO").attr("value",page);
+    viewdata = data.slice((page-1)*pageSize,page*pageSize);
+    redraw();
+  });
+
+  d3.select('#last').on("click" ,function() {
+    page = Math.ceil(data.length/pageSize);
+    d3.select("#pageNO").attr("value",page);
+    viewdata = data.slice((page-1)*pageSize,page*pageSize);
+    redraw();
+  });*/
+
+  function redraw() {
+    rows = table.select("tbody").selectAll("tr")
+      .data(viewdata, function(d){  if(d!=undefined)return d.id; })
+    
+        // enter the rows
+        rows.enter()
+         .append("tr");
+         
+        // enter td's in each row
+        row_entries = rows.selectAll("td")
+            .data(function(d) { 
+              var arr = [];
+              for (var k in d) {
+                if (d.hasOwnProperty(k)) {
+              arr.push(d[k]);
+                }
+              }
+              return [arr[0],arr[1],arr[2]];
+            })
+          .enter()
+            .append("td") 
+
+        // draw row entries with no anchor 
+        row_entries_no_anchor = row_entries.filter(function(d) {
+          return (/https?:\/\//.test(d) == false)
+        })
+        row_entries_no_anchor.text(function(d) { return d; })
+
+        
+        
+        // exit
+        rows.exit().remove();
+
+}
+
+function searchTable(obj){
+    /**  search functionality **/
+    var searched_data = data,
+            text = obj.value.trim();
+        
+        var searchResults = searched_data.map(function(r) {
+          console.log(r);
+          var regex = new RegExp("^" + text + ".*", "i");
+          if (regex.test(r.packagetype)) { // if there are any results
+            return regex.exec(r.packagetype)[0]; // return them to searchResults
+          } 
+        })
+      
+      // filter blank entries from searchResults
+        searchResults = searchResults.filter(function(r){ 
+          return r != undefined;
+        })
+        
+        // filter dataset with searchResults
+        searched_data = searchResults.map(function(r) {
+           return data.filter(function(p) {
+            console.log(p);
+            return p.packagetype.indexOf(r) != -1;
+          })
+        })
+
+        // flatten array 
+    searched_data = [].concat.apply([], searched_data)
+    
+    addFilterRow();
+        
+        // data bind with new data
+    rows = table.select("tbody").selectAll("tr")
+      .data(searched_data, function(d){  if(d!=undefined)return d.id; })
+    
+        // enter the rows
+        rows.enter()
+         .append("tr");
+         
+        // enter td's in each row
+        row_entries = rows.selectAll("td")
+            .data(function(d) { 
+              var arr = [];
+              for (var k in d) {
+                if (d.hasOwnProperty(k)) {
+              arr.push(d[k]);
+                }
+              }
+              return [arr[0],arr[1],arr[2]];
+            })
+          .enter()
+            .append("td") 
+
+        // draw row entries with no anchor 
+        row_entries_no_anchor = row_entries.filter(function(d) {
+          return (/https?:\/\//.test(d) == false)
+        })
+        row_entries_no_anchor.text(function(d) { return d; })
+
+        
+        
+        // exit
+        rows.exit().remove();
+}
 //});
-d3.select(self.frameElement).style("height", "780px").style("width", "1150px"); 
+//d3.select(self.frameElement).style("height", "780px").style("width", "1150px"); 

@@ -4,12 +4,14 @@
 <head>
   <meta charset="utf-8">
   <title>Dynamic Table</title>
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet" />
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
     <link href="styles.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" charset="utf-8"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" charset="utf-8"></script>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js" charset="utf-8"></script>
+    <script src="d3table.js"></script>
 
   
 
@@ -27,24 +29,24 @@
         <nav aria-label="Page navigation" id="paginationBar">
           <ul class="pagination custom-pegination">
             <li>
-              <a href="#" aria-label="Previous" id="first">
+              <a href="#" aria-label="Previous" class="pagination-action" id="first">
                 <span aria-hidden="true">First</span>
               </a>
             </li>
             <li>
-              <a href="#" aria-label="Previous" id="previous">
+              <a href="#" aria-label="Previous" class="pagination-action" id="previous">
                 <span aria-hidden="true">&laquo;</span>
               </a>
             </li>
             <li><input type="text" class="form-control pagination-input" id="pageNO"></li>
             <li><label class="form-control pagination-input">of</label><input type="text" class="form-control pagination-input" id = "totalPages" readonly></li>
             <li>
-              <a href="#" aria-label="Next" id="next">
+              <a href="#" aria-label="Next" class="pagination-action" id="next">
                 <span aria-hidden="true">&raquo;</span>
               </a>
             </li>
             <li>
-              <a href="#" aria-label="Previous" id = "last">
+              <a href="#" aria-label="Previous" class="pagination-action" id="last">
                 <span aria-hidden="true">Last</span>
               </a>
             </li>
@@ -52,7 +54,10 @@
         </nav>
     </div>
 </div>
- <script src="d3table.js"></script>
-
+<script type="text/javascript">
+$(document).ready(function(){
+    drawTable("FilterableTable", false, true);
+});  
+</script>
 </body>
 </html>
