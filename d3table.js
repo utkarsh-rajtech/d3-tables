@@ -55,9 +55,9 @@ var rows, row_entries, row_entries_no_anchor, row_entries_with_anchor, showInlin
 var paginationoff, pageSize, pageLimit, viewdata, nxt, prv, first, last;
 var page = 1;
 
-function drawTable(id, pagination, showInlineFilter){
+function drawTable(id, pagination, showInlineFilterbool){
     paginationoff = pagination;
-    showInlineFilter = showInlineFilter;
+    showInlineFilter = showInlineFilterbool;
     d3.select("#"+id).append("div").attr({"class":"filter-icon", "id":"filter-icon"}).append("i").attr({"class":"fa fa-filter", "aria-hidden":"true"});
     
     table = d3.select("#"+id).append("table").attr("class","table table-bordered");
@@ -126,8 +126,9 @@ function addFilterRow(){
 
 function addRowData(){
     table.append("tbody");
-    if(showInlineFilter == true)
-        addFilterRow();
+    if(showInlineFilter == true){
+        addFilterRow();       
+    }
     
     // data bind    
     rows = table.select("tbody").selectAll("tr").data(viewdata, function(d){ if(d!=undefined)return d.id; });
@@ -187,7 +188,6 @@ function attachListeners(){
        viewdata = data.slice((page-1)*pageSize,page*pageSize);
        redraw();
    });*/
-    
     
     if(showInlineFilter == true){
         d3.select('#filter-icon').select('i').on("click", function(d, i){
@@ -306,38 +306,6 @@ function attachListeners(){
     
 }
 
-/*  
-  .on("click" ,function() {
-  if(page < pageLimit){
-    page++;
-    d3.select("#pageNO").attr("value",page);
-    viewdata = data.slice((page-1)*pageSize,page*pageSize);
-    redraw();
-  }
-  });
-
-  .on("click" ,function() {
-    if(page > 1){
-    page--;
-    d3.select("#pageNO").attr("value",page);
-    viewdata = data.slice((page-1)*pageSize,page*pageSize);
-    redraw();
-  }
-  });
-
-  d3.select('#first').on("click" ,function() {
-    page = 1;
-    d3.select("#pageNO").attr("value",page);
-    viewdata = data.slice((page-1)*pageSize,page*pageSize);
-    redraw();
-  });
-
-  d3.select('#last').on("click" ,function() {
-    page = Math.ceil(data.length/pageSize);
-    d3.select("#pageNO").attr("value",page);
-    viewdata = data.slice((page-1)*pageSize,page*pageSize);
-    redraw();
-  });*/
 
   function redraw() {
     rows = table.select("tbody").selectAll("tr")
@@ -403,7 +371,9 @@ function searchTable(obj){
         // flatten array 
     searched_data = [].concat.apply([], searched_data)
     
-    addFilterRow();
+    if(showInlineFilter == true){
+        addFilterRow();        
+    }
         
         // data bind with new data
     rows = table.select("tbody").selectAll("tr")
