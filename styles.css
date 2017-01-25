@@ -16,7 +16,7 @@ body {
 }
 
 #FilterableTable {
-  width: 50%;
+  width: auto;
   height: 100%;
   margin-top:30px;
 }
@@ -144,4 +144,21 @@ label.pagination-input {
 
 #totalPages {
     background: none;
+}
+
+/**********************************************|
+|* Custom CSS for overriding bootstrap styles *|
+|**********************************************/
+.table-bordered{
+    width: auto;
+}
+.filter-icon{
+    display: block;
+}
+.filter-icon i{
+    font-size: 20px;
+    cursor: pointer;
+}
+.filter-row{
+    
 }

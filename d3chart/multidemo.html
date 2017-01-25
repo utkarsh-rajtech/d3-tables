@@ -86,7 +86,7 @@
 
 <script type="text/javascript">
 var m = [80, 80, 80, 80]; // margins
-var w = 700- m[1] - m[3];   // width
+var w = 1000- m[1] - m[3];   // width
 var h = 400 - m[0] - m[2];
 var chartConfig = {
     "xAxesFields": [
@@ -444,7 +444,25 @@ function renderDualAxisChart(graph) {
                   .attr("class", "y axis axisRight")
                   .attr("transform", "translate(355 ,0)")
                   .call(yAxisRightOne);
-  graph.append("svg:path").attr("d", line2(chartdata[1])).attr("class", "data2");                
+  graph.append("svg:g").selectAll("bar")
+      .data(chartdata[1])
+    .enter().append("rect")
+      .style("fill", "orange")
+      .attr("x", function(d) { 
+        console.log(x.rangePoints([0,340]));
+        return x(d.name); })
+      .attr("width", 30)
+      .attr("y", function(d) {
+       console.log(y2(d.value)); 
+        return y2(d.value); })
+      .attr("height", function(d) { 
+       
+        return h - y2(d.value); });  
+        graph.append("text")
+            .attr("text-anchor", "middle")  
+            .attr("transform", "translate("+ 405 +","+(h/2)+")rotate(-90)")  
+            .text("Planned Effort");                 
+  //graph.append("svg:path").attr("d", line2(chartdata[1])).attr("class", "data2");                
 }
 
 function renderThreeAxisChart(graph) {
@@ -455,6 +473,10 @@ function renderThreeAxisChart(graph) {
                   .attr("transform", "translate(405,0)")
                   .call(yAxisRightTwo);  
   graph.append("svg:path").attr("d", line3(chartdata[2])).attr("class", "data3");
+  graph.append("text")
+            .attr("text-anchor", "middle")  
+            .attr("transform", "translate("+ 455 +","+(h/2)+")rotate(-90)")  
+            .text("Actual Effort");
 }
 
 function renderFourAxisChart(graph) {
@@ -465,6 +487,10 @@ function renderFourAxisChart(graph) {
                 .attr("transform","translate(455,0)")
                 .call(yAxisRightThree);
   graph.append("svg:path").attr("d", line4(chartdata[3])).attr("class", "data4");
+  graph.append("text")
+            .attr("text-anchor", "middle")  
+            .attr("transform", "translate("+ 510 +","+(h/2)+")rotate(-90)")  
+            .text("Remaining Effort");
 }
 
 function drawChart(numOfAxes){
