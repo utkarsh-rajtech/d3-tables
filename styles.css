@@ -152,13 +152,69 @@ label.pagination-input {
 .table-bordered{
     width: auto;
 }
-.filter-icon{
+.filter-icon, .active-icon {
     display: block;
+    float: right;
 }
-.filter-icon i{
+.filter-icon i, .active-icon i {
     font-size: 20px;
     cursor: pointer;
 }
 .filter-row{
     
 }
+
+
+.filter-list-container {
+    position: absolute;
+    left: 7%;
+}
+
+.list {
+    list-style: none;
+    padding: 10px;
+    background: #333;
+    color: #fff;
+    text-align: left;
+    max-height: 200px;
+    overflow: auto;
+    margin-bottom: 0;
+}
+
+.list:before {
+ content:".";
+    width: 0;
+height: 0;
+border-style: solid;
+border-width: 0 10px 10px 10px;
+border-color: transparent transparent #333 transparent;
+        top: -10px;
+    position: absolute;
+    left: 40%;
+}
+
+#filter-list-container {
+    /*position: relative;*/
+    position: absolute;
+    left: 7%;
+    
+}
+
+.list li {
+    padding: 5px;
+    float: left;
+}
+
+.custom-btn {
+    border-radius: 0;
+}
+
+.checkbox-container {
+    clear: both;
+}
+
+.hide {
+    display: none;
+}
+
+
