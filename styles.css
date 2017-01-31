@@ -217,4 +217,15 @@ border-color: transparent transparent #333 transparent;
     display: none;
 }
 
+.filter-icon, .active-icon {
+display: block;
+float: right;
+position: relative;
+}
+#filter-list-container {
+/* position: relative; */
+position: absolute;
+left: -82px;
+width: 200px;
+}
 

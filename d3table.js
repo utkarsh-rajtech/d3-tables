@@ -20,7 +20,7 @@ var data = [
                     { packagetype : "Design Defects", None : 73,Others : 5,id :"19"},
                     { packagetype : "Closed Issues", None : 90,Others : 2,id :"20" }
                 ];
-var column_names = ["Package Type","None","Others"];
+var column_names = ["PackageType","None","Others"];
 var clicks = {packagetype: 0, none: 0, others: 0};
 var totals = [];
 
@@ -70,7 +70,9 @@ function drawTable(id, pagination, showInlineFilterbool){
     .append("th").append("span").attr("class", "span")
     .text(function(d, i) {return d;});
     
-    table.select("tr").select("th").append("div").attr({"class":"filter-icon", "id":"filter-icon"}).append("i").attr({"class":"fa fa-filter", "aria-hidden":"true"});
+    table.select("tr").selectAll("th").append("div").attr({"class":"filter-icon", "id":function(d){
+
+      return "filter-icon-"+d;}}).append("i").attr({"class":"fa fa-filter", "aria-hidden":"true"});
     
     //.text(function(d) { return d; });
     
@@ -180,18 +182,40 @@ function setPage(elm){
 }
 
 /*gets unique column categories entries .. Currently below function gets unique entries of packagetype column data*/
-function getColumnCategories(){
+function getColumnCategories(key){
   var flags = [],l = data.length, i;
+  column_categories = [];
+  if(key == "PackageType"){
   for( i=0; i<l; i++) {
     if( flags[data[i].packagetype]) continue;
     flags[data[i].packagetype] = true;
     column_categories.push(data[i].packagetype);
   }
+
+  }
+  if(key == "None") {
+  for( i=0; i<l; i++) {
+    if( flags[data[i].None]) continue;
+    flags[data[i].None] = true;
+    column_categories.push(data[i].None);
+  }
+  }
+
+  if(key == "Others") {
+  for( i=0; i<l; i++) {
+    if( flags[data[i].Others]) continue;
+    flags[data[i].Others] = true;
+    column_categories.push(data[i].Others);
+  }
+  }
+  
 };
 
 /* onclick of filter icon below function displays checkboxes with id as a categories of table column*/
-function addFilterItems(){
-  filterContainer =  d3.select('#filter-icon').append("div").attr({"id":"filter-list-container"});
+function addFilterItems(id){
+  
+  console.log(d3.select("#filter-list-container"));
+  filterContainer =  d3.select(id).append("div").attr({"id":"filter-list-container"});
   filterOptions = filterContainer.append("ul").attr({"class":"list","id":"filter-list"});
   for(var m=0; m<column_categories.length; m++){
     //filterOptions.append("li").text(column_categories[m]).append("input").attr({"type":"checkbox", "id":column_categories[m]});
@@ -201,21 +225,23 @@ function addFilterItems(){
   }
   
   filterContainer.append("input").attr({"type":"button","value":"Apply","id":"apply","class":"form-control custom-btn"});
-  filterContainer.select('#apply').on("click",function(){
-    removeFilterItems();
+  filterContainer.select('#apply').on("click",function(d){
      var searchValues = [];
      var selectedArray = filterOptions.selectAll("li input[type=checkbox]:checked");
      selectedArray = _.flatten(selectedArray);
-     _.each(selectedArray,function(element){
+     if(selectedArray.length > 0){
+      _.each(selectedArray,function(element){
         searchValues.push(element.id);
      });
-     filterTable(searchValues);
+     filterTable(searchValues,d);
+     }
+     
       
      // hide filter pop-up on click of apply button
-     //d3.select('#filter-list-container').attr({"class":"hide"});
+     d3.selectAll('#filter-list-container').style({"display":"none"});
      
   }); 
-    d3.select('#filter-icon').attr({'id': 'active-icon'});
+    
 };
 
 function removeFilterItems(){
@@ -224,12 +250,32 @@ function removeFilterItems(){
 };
 
 /* search records according to selected categories in filter */
-function filterTable(searchArray){
+function filterTable(searchArray,key){
   var searchResult = [];
+  if(key == "None"){
+    _.each(searchArray,function(field){
+    var a = _.where(data,{None: Number(field)});
+    searchResult.push(a);
+   })
+
+  }
+
+  if(key == "PackageType"){
    _.each(searchArray,function(field){
     var a = _.where(data,{packagetype: field});
     searchResult.push(a);
    })
+
+  }
+
+  if(key == "Others"){
+    _.each(searchArray,function(field){
+    var a = _.where(data,{Others: Number(field)});
+    searchResult.push(a);
+   })
+  }
+
+   
     
    searchResult = _.flatten(searchResult);  
    rows = table.select("tbody").selectAll("tr")
@@ -305,26 +351,22 @@ function attachListeners(){
     }
     
     if(showInlineFilter == false){
-      d3.select('#active-icon').select('i').on("click", function(d, i){
-          console.log('click');
-          
-      });
-      d3.select('#filter-icon').select('i').on("click", function(d, i){
-          //console.log("filter clicked");
-          getColumnCategories();
-          addFilterItems();
+     
+
+      d3.selectAll('.filter-icon').select('i').on("click", function(d, i){
+          getColumnCategories(d);
+          addFilterItems('#filter-icon-'+d);
           
           // on-click of filter icon displaying filter pop-up
           //d3.select('.hide').attr({"class":""});
-          
       })
     }
     
-    
+   
     
     /**  sort functionality **/
   table.select("tr").selectAll("th").select("span").on("click", function(d) {
-           if (d == "Package Type") {
+           if (d == "PackageType") {
         clicks.packagetype++;
         // even number of clicks
         if (clicks.packagetype % 2 == 0) {
