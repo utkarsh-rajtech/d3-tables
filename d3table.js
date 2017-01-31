@@ -67,7 +67,7 @@ function drawTable(id, pagination, showInlineFilterbool){
     headers = table.select("tr").selectAll("th")
     .data(column_names)
     .enter()
-    .append("th").attr("class", "span")
+    .append("th").append("span").attr("class", "span")
     .text(function(d, i) {return d;});
     
     table.select("tr").select("th").append("div").attr({"class":"filter-icon", "id":"filter-icon"}).append("i").attr({"class":"fa fa-filter", "aria-hidden":"true"});
@@ -202,6 +202,7 @@ function addFilterItems(){
   
   filterContainer.append("input").attr({"type":"button","value":"Apply","id":"apply","class":"form-control custom-btn"});
   filterContainer.select('#apply').on("click",function(){
+    removeFilterItems();
      var searchValues = [];
      var selectedArray = filterOptions.selectAll("li input[type=checkbox]:checked");
      selectedArray = _.flatten(selectedArray);
@@ -218,7 +219,8 @@ function addFilterItems(){
 };
 
 function removeFilterItems(){
-    filterContainer.hide();
+    //filterContainer.hide();
+    d3.select("filter-list-container").style("display","none");
 };
 
 /* search records according to selected categories in filter */
@@ -305,7 +307,7 @@ function attachListeners(){
     if(showInlineFilter == false){
       d3.select('#active-icon').select('i').on("click", function(d, i){
           console.log('click');
-          removeFilterItems();
+          
       });
       d3.select('#filter-icon').select('i').on("click", function(d, i){
           //console.log("filter clicked");
@@ -321,7 +323,7 @@ function attachListeners(){
     
     
     /**  sort functionality **/
-  table.select("tr").selectAll("th").on("click", function(d) {
+  table.select("tr").selectAll("th").select("span").on("click", function(d) {
            if (d == "Package Type") {
         clicks.packagetype++;
         // even number of clicks
