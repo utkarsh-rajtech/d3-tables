@@ -20,7 +20,7 @@ var data = [
                     { packagetype : "Design Defects", None : 73,Others : 5,id :"19"},
                     { packagetype : "Closed Issues", None : 90,Others : 2,id :"20" }
                 ];
-var column_names = ["PackageType","None","Others"];
+var column_names = ["packagetype","None","Others"];
 var clicks = {packagetype: 0, none: 0, others: 0};
 var totals = [];
 
@@ -182,33 +182,14 @@ function setPage(elm){
 }
 
 /*gets unique column categories entries .. Currently below function gets unique entries of packagetype column data*/
-function getColumnCategories(key){
-  var flags = [],l = data.length, i;
+function getColumnCategories(key,columnData){
+  var flags = [],l = columnData.length, i;
   column_categories = [];
-  if(key == "PackageType"){
   for( i=0; i<l; i++) {
-    if( flags[data[i].packagetype]) continue;
-    flags[data[i].packagetype] = true;
-    column_categories.push(data[i].packagetype);
+    if( flags[columnData[i][key]]) continue;
+    flags[columnData[i][key]] = true;
+    column_categories.push(columnData[i][key]);
   }
-
-  }
-  if(key == "None") {
-  for( i=0; i<l; i++) {
-    if( flags[data[i].None]) continue;
-    flags[data[i].None] = true;
-    column_categories.push(data[i].None);
-  }
-  }
-
-  if(key == "Others") {
-  for( i=0; i<l; i++) {
-    if( flags[data[i].Others]) continue;
-    flags[data[i].Others] = true;
-    column_categories.push(data[i].Others);
-  }
-  }
-  
 };
 
 /* onclick of filter icon below function displays checkboxes with id as a categories of table column*/
@@ -254,32 +235,15 @@ function removeFilterItems(){
 /* search records according to selected categories in filter */
 function filterTable(searchArray,key){
   var searchResult = [];
-  if(key == "None"){
     _.each(searchArray,function(field){
-    var a = _.where(data,{None: Number(field)});
-    searchResult.push(a);
+      var searchObj = {};
+      (key == "packagetype") ? searchObj[key] = field : searchObj[key] = Number(field);
+      var a = _.where(data,searchObj);
+      searchResult.push(a);
    })
 
-  }
-
-  if(key == "PackageType"){
-   _.each(searchArray,function(field){
-    var a = _.where(data,{packagetype: field});
-    searchResult.push(a);
-   })
-
-  }
-
-  if(key == "Others"){
-    _.each(searchArray,function(field){
-    var a = _.where(data,{Others: Number(field)});
-    searchResult.push(a);
-   })
-  }
-
-   
-    
-   searchResult = _.flatten(searchResult);  
+   searchResult = _.flatten(searchResult); 
+   data = searchResult; 
    rows = table.select("tbody").selectAll("tr")
       .data(searchResult, function(d){  if(d!=undefined)return d.id; })
     
@@ -361,7 +325,7 @@ function attachListeners(){
 
       d3.selectAll('.filter-icon').select('i').on("click", function(d, i){
           d3.event.stopPropagation();
-          getColumnCategories(d);
+          getColumnCategories(d,data);
           removeFilterItems();
           addFilterItems('#filter-icon-'+d);
           
@@ -372,7 +336,7 @@ function attachListeners(){
         
      d3.select(".table").on("click",function(){
             //debugger;
-            console.log(4343);
+            
             keepFilterItems();
      });        
       
@@ -583,7 +547,7 @@ function searchTable(obj){
 
 function keepFilterItems(){
     d3.event.stopPropagation();
-    console.log(432);
+   
 };
 
 
