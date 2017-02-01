@@ -1,26 +1,26 @@
 var data = [
-                    { "packagetype" : "Internal R...", "None" : 45,"Others" : 4 ,"id":"1"},
-                    { "packagetype" : "Internal T...", "None" : 55,"Others" : 7 ,"id":"2"},
-                    { "packagetype" : "Customer R...", "None" : 40,"Others" : 3 ,"id" :"3"},
-                    { "packagetype" : "Legacy Def...", "None" : 32,"Others" : 8,"id" :"4" },
-                    { "packagetype" : "New Request...", "None" : 47,"Others" : 6,"id" :"5" },
-                    { "packagetype" : "POC...", "None" : 56,"Others" : 10,"id" :"6" },
-                    { "packagetype" : "Defect Count..", "None" : 73,"Others" : 5,"id" :"7"},
-                    { "packagetype" : "Acceptance Rate", "None" : 90,"Others" : 2,"id" :"8" },
-                    { "packagetype" : "Defect Analysis...", "None" : 45,"Others" : 4 ,"id":"9"},
-                    { "packagetype" : "Quality...", "None" : 55,"Others" : 7 ,"id":"10"},
-                    { "packagetype" : "Customer R...", "None" : 40,"Others" : 3 ,"id" :"11"},
-                    { "packagetype" : "Pull Requests...", "None" : 32,"Others" : 8,"id" :"12" },
-                    { "packagetype" : "Defect Removal Efficiency", "None" : 47,"Others" : 6,"id" :"13" },
-                    { "packagetype" : "Failure Cost...", "None" : 56,"Others" : 10,"id" :"14" },
-                    { "packagetype" : "Prevention Cost", "None" : 73,"Others" : 5,"id" :"15"},
-                    { "packagetype" : "Open Issues", "None" : 90,"Others" : 2,"id" :"16" },
-                    { "packagetype" : "Resource Allocation", "None" : 47,"Others" : 6,"id" :"17" },
-                    { "packagetype" : "Cost of Quality...", "None" : 56,"Others" : 10,"id" :"18" },
-                    { "packagetype" : "Design Defects", "None" : 73,"Others" : 5,"id" :"19"},
-                    { "packagetype" : "Closed Issues", "None" : 90,"Others" : 2,"id" :"20" }
+                    { packagetype : "Internal R...", None : 45,Others : 4 ,id:"1"},
+                    { packagetype : "Internal T...", None : 55,Others : 7 ,id:"2"},
+                    { packagetype : "Customer R...", None : 40,Others : 3 ,id :"3"},
+                    { packagetype : "Legacy Def...", None : 32,Others : 8,id :"4" },
+                    { packagetype : "New Request...", None : 47,Others : 6,id :"5" },
+                    { packagetype : "POC...", None : 56,Others : 10,id :"6" },
+                    { packagetype : "Defect Count..", None : 73,Others : 5,id :"7"},
+                    { packagetype : "Acceptance Rate", None: 90,Others : 2,id :"8" },
+                    { packagetype : "Defect Analysis...", None : 45,Others : 4 ,id:"9"},
+                    { packagetype : "Quality...", None : 55,Others : 7 ,id:"10"},
+                    { packagetype : "Customer R...", None : 40,Others : 3 ,id :"11"},
+                    { packagetype : "Pull Requests...", None : 32,Others : 8,id :"12" },
+                    { packagetype : "Defect Removal Efficiency", None : 47,Others : 6,id :"13" },
+                    { packagetype : "Failure Cost...", None : 56,Others : 10,id :"14" },
+                    { packagetype : "Prevention Cost", None : 73,Others : 5,id :"15"},
+                    { packagetype : "Open Issues", None : 90,Others : 2,"id" :"16" },
+                    { packagetype : "Resource Allocation", None : 47,Others : 6,id :"17" },
+                    { packagetype : "Cost of Quality...", None : 56,Others : 10,id :"18" },
+                    { packagetype : "Design Defects", None : 73,Others : 5,id :"19"},
+                    { packagetype : "Closed Issues", None : 90,Others : 2,id :"20" }
                 ];
-var column_names = ["Package Type","None","Others"];
+var column_names = ["PackageType","None","Others"];
 var clicks = {packagetype: 0, none: 0, others: 0};
 var totals = [];
 
@@ -54,11 +54,12 @@ var table, headers;
 var rows, row_entries, row_entries_no_anchor, row_entries_with_anchor, showInlineFilter;
 var paginationoff, pageSize, pageLimit, viewdata, nxt, prv, first, last;
 var page = 1;
-
+var column_categories=[];
+var filterContainer,filterOptions;
 function drawTable(id, pagination, showInlineFilterbool){
     paginationoff = pagination;
     showInlineFilter = showInlineFilterbool;
-    d3.select("#"+id).append("div").attr({"class":"filter-icon", "id":"filter-icon"}).append("i").attr({"class":"fa fa-filter", "aria-hidden":"true"});
+    //d3.select("#"+id).append("div").attr({"class":"filter-icon", "id":"filter-icon"}).append("i").attr({"class":"fa fa-filter", "aria-hidden":"true"});
     
     table = d3.select("#"+id).append("table").attr("class","table table-bordered");
     table.append("thead").append("tr"); 
@@ -66,8 +67,13 @@ function drawTable(id, pagination, showInlineFilterbool){
     headers = table.select("tr").selectAll("th")
     .data(column_names)
     .enter()
-    .append("th")
+    .append("th").append("span").attr("class", "span")
     .text(function(d, i) {return d;});
+    
+    table.select("tr").selectAll("th").append("div").attr({"class":"filter-icon", "id":function(d){
+
+      return "filter-icon-"+d;}}).append("i").attr({"class":"fa fa-filter", "aria-hidden":"true"});
+    
     //.text(function(d) { return d; });
     
     
@@ -91,6 +97,7 @@ function drawTable(id, pagination, showInlineFilterbool){
     if(paginationoff === true){
         pageSize = data.length;
         d3.select("#paginationBar").style("display","none");
+        drawTablePagination();
     } else{
         pageSize = 5;
         drawTablePagination();
@@ -129,6 +136,7 @@ function addRowData(){
     if(showInlineFilter == true){
         addFilterRow();       
     }
+    
     
     // data bind    
     rows = table.select("tbody").selectAll("tr").data(viewdata, function(d){ if(d!=undefined)return d.id; });
@@ -173,6 +181,139 @@ function setPage(elm){
     page = pagenum;
 }
 
+/*gets unique column categories entries .. Currently below function gets unique entries of packagetype column data*/
+function getColumnCategories(key){
+  var flags = [],l = data.length, i;
+  column_categories = [];
+  if(key == "PackageType"){
+  for( i=0; i<l; i++) {
+    if( flags[data[i].packagetype]) continue;
+    flags[data[i].packagetype] = true;
+    column_categories.push(data[i].packagetype);
+  }
+
+  }
+  if(key == "None") {
+  for( i=0; i<l; i++) {
+    if( flags[data[i].None]) continue;
+    flags[data[i].None] = true;
+    column_categories.push(data[i].None);
+  }
+  }
+
+  if(key == "Others") {
+  for( i=0; i<l; i++) {
+    if( flags[data[i].Others]) continue;
+    flags[data[i].Others] = true;
+    column_categories.push(data[i].Others);
+  }
+  }
+  
+};
+
+/* onclick of filter icon below function displays checkboxes with id as a categories of table column*/
+function addFilterItems(id){
+  
+  console.log(d3.select("#filter-list-container"));
+  filterContainer =  d3.select(id).append("div").attr({"id":"filter-list-container"});
+  filterOptions = filterContainer.append("ul").attr({"class":"list","id":"filter-list"});
+  for(var m=0; m<column_categories.length; m++){
+    //filterOptions.append("li").text(column_categories[m]).append("input").attr({"type":"checkbox", "id":column_categories[m]});
+    
+    filterOptions.append("li").attr({"class":"checkbox-container"}).append("input").attr({"type":"checkbox", "id":column_categories[m]});
+    filterOptions.append("li").text(column_categories[m]);
+  }
+  
+  filterContainer.append("input").attr({"type":"button","value":"Apply","id":"apply","class":"form-control custom-btn"});
+  filterContainer.select('#apply').on("click",function(d){
+     var searchValues = [];
+     var selectedArray = filterOptions.selectAll("li input[type=checkbox]:checked");
+     selectedArray = _.flatten(selectedArray);
+     if(selectedArray.length > 0){
+      _.each(selectedArray,function(element){
+        searchValues.push(element.id);
+     });
+     filterTable(searchValues,d);
+     }
+     
+      
+     // hide filter pop-up on click of apply button
+     d3.selectAll('#filter-list-container').style({"display":"none"});
+     
+  }); 
+    
+};
+
+
+function removeFilterItems(){
+    //filterContainer.hide();
+    //d3.select("filter-list-container").style("display","none");
+    d3.selectAll('#filter-list-container').style({"display":"none"});
+};
+
+/* search records according to selected categories in filter */
+function filterTable(searchArray,key){
+  var searchResult = [];
+  if(key == "None"){
+    _.each(searchArray,function(field){
+    var a = _.where(data,{None: Number(field)});
+    searchResult.push(a);
+   })
+
+  }
+
+  if(key == "PackageType"){
+   _.each(searchArray,function(field){
+    var a = _.where(data,{packagetype: field});
+    searchResult.push(a);
+   })
+
+  }
+
+  if(key == "Others"){
+    _.each(searchArray,function(field){
+    var a = _.where(data,{Others: Number(field)});
+    searchResult.push(a);
+   })
+  }
+
+   
+    
+   searchResult = _.flatten(searchResult);  
+   rows = table.select("tbody").selectAll("tr")
+      .data(searchResult, function(d){  if(d!=undefined)return d.id; })
+    
+        // enter the rows
+        rows.enter()
+         .append("tr");
+         
+        // enter td's in each row
+        row_entries = rows.selectAll("td")
+            .data(function(d) { 
+              var arr = [];
+              for (var k in d) {
+                if (d.hasOwnProperty(k)) {
+              arr.push(d[k]);
+                }
+              }
+              return [arr[0],arr[1],arr[2]];
+            })
+          .enter()
+            .append("td") 
+
+        // draw row entries with no anchor 
+        row_entries_no_anchor = row_entries.filter(function(d) {
+          return (/https?:\/\//.test(d) == false)
+        })
+        row_entries_no_anchor.text(function(d) { return d; })
+
+        
+        
+        // exit
+        rows.exit().remove();
+  
+};
+
 function attachListeners(){
     d3.selectAll('.pagination-action').on("click", function(d, i){
         setPage(this.id);
@@ -191,6 +332,7 @@ function attachListeners(){
     
     if(showInlineFilter == true){
         d3.select('#filter-icon').select('i').on("click", function(d, i){
+          console.log(d);
             if(table.select("tr#filter-row").classed('open')){
                 table.select("tr#filter-row").transition().transition().style("display", "none").each("end", function(){
                    d3.select(this).classed("open", false);
@@ -210,11 +352,39 @@ function attachListeners(){
         });
     }
     
+    if(showInlineFilter == false){
+     
+      d3.selectAll('html').on("click", function(){
+          //d3.event.stopPropagation();
+          removeFilterItems();
+      });
+
+      d3.selectAll('.filter-icon').select('i').on("click", function(d, i){
+          d3.event.stopPropagation();
+          getColumnCategories(d);
+          removeFilterItems();
+          addFilterItems('#filter-icon-'+d);
+          
+          // on-click of filter icon displaying filter pop-up
+          //d3.select('.hide').attr({"class":""});
+      });
+        
+        
+     d3.select(".table").on("click",function(){
+            //debugger;
+            console.log(4343);
+            keepFilterItems();
+     });        
+      
+        
+        
+    }
     
+   
     
     /**  sort functionality **/
-  headers.on("click", function(d) {
-           if (d == "Package Type") {
+  table.select("tr").selectAll("th").select("span").on("click", function(d) {
+           if (d == "PackageType") {
         clicks.packagetype++;
         // even number of clicks
         if (clicks.packagetype % 2 == 0) {
@@ -404,9 +574,17 @@ function searchTable(obj){
         row_entries_no_anchor.text(function(d) { return d; })
 
         
-        
+    
         // exit
         rows.exit().remove();
 }
 //});
 //d3.select(self.frameElement).style("height", "780px").style("width", "1150px"); 
+
+function keepFilterItems(){
+    d3.event.stopPropagation();
+    console.log(432);
+};
+
+
+
