@@ -355,7 +355,6 @@ function attachListeners(){
     if(showInlineFilter == false){
      
       d3.selectAll('html').on("click", function(){
-          console.log(098434);
           //d3.event.stopPropagation();
           removeFilterItems();
       });
@@ -363,6 +362,7 @@ function attachListeners(){
       d3.selectAll('.filter-icon').select('i').on("click", function(d, i){
           d3.event.stopPropagation();
           getColumnCategories(d);
+          removeFilterItems();
           addFilterItems('#filter-icon-'+d);
           
           // on-click of filter icon displaying filter pop-up
