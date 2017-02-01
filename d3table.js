@@ -244,9 +244,11 @@ function addFilterItems(id){
     
 };
 
+
 function removeFilterItems(){
     //filterContainer.hide();
-    d3.select("filter-list-container").style("display","none");
+    //d3.select("filter-list-container").style("display","none");
+    d3.selectAll('#filter-list-container').style({"display":"none"});
 };
 
 /* search records according to selected categories in filter */
@@ -352,14 +354,29 @@ function attachListeners(){
     
     if(showInlineFilter == false){
      
+      d3.selectAll('html').on("click", function(){
+          console.log(098434);
+          //d3.event.stopPropagation();
+          removeFilterItems();
+      });
 
       d3.selectAll('.filter-icon').select('i').on("click", function(d, i){
+          d3.event.stopPropagation();
           getColumnCategories(d);
           addFilterItems('#filter-icon-'+d);
           
           // on-click of filter icon displaying filter pop-up
           //d3.select('.hide').attr({"class":""});
-      })
+      });
+        
+        
+     d3.select(".table").on("click",function(){
+            //debugger;
+            keepFilterItems();
+     });        
+      
+        
+        
     }
     
    
@@ -556,9 +573,17 @@ function searchTable(obj){
         row_entries_no_anchor.text(function(d) { return d; })
 
         
-        
+    
         // exit
         rows.exit().remove();
 }
 //});
 //d3.select(self.frameElement).style("height", "780px").style("width", "1150px"); 
+
+function keepFilterItems(){
+    d3.event.stopPropagation();
+    console.log(432);
+};
+
+
+

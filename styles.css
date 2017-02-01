@@ -196,8 +196,7 @@ border-color: transparent transparent #333 transparent;
 #filter-list-container {
     /*position: relative;*/
     position: absolute;
-    left: 7%;
-    
+    left: 7%;  
 }
 
 .list li {
@@ -218,14 +217,18 @@ border-color: transparent transparent #333 transparent;
 }
 
 .filter-icon, .active-icon {
-display: block;
-float: right;
-position: relative;
+    display: block;
+    float: right;
+    position: relative;
 }
 #filter-list-container {
-/* position: relative; */
-position: absolute;
-left: -82px;
-width: 200px;
+    /* position: relative; */
+    position: absolute;
+    left: -82px;
+    width: 200px;
+}
+
+html {
+    height: 100%;
 }
 
