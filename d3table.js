@@ -372,6 +372,7 @@ function attachListeners(){
         
      d3.select(".table").on("click",function(){
             //debugger;
+            console.log(4343);
             keepFilterItems();
      });        
       
