@@ -206,6 +206,7 @@ border-color: transparent transparent #333 transparent;
 
 .custom-btn {
     border-radius: 0;
+    -moz-border-radius:0;
 }
 
 .checkbox-container {
